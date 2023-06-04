@@ -35,7 +35,7 @@ void AppendArray(Array* arr, int n)
 	arr->array[arr->realSize++] = n;
 }
 
-Array InsertArray(Array* arr, int n, int p)
+void InsertArray(Array* arr, int n, int p)
 {
 	CheckSizeArray(arr);
 	if (p < 0)
@@ -45,28 +45,20 @@ Array InsertArray(Array* arr, int n, int p)
 	if (p > arr->realSize)
 	{
 		printf("You cannot insert value, the array size is smaller, than place value\n");
-		return *arr;
+		return;
 	}
 
-	Array new = CreateArray(arr->realSize + 1);
-	for (int i = 0; i < p; ++i)
+	for (int i = arr->realSize + 1; i > p; --i)
 	{
-		AppendArray(&new, arr->array[i]);
+		arr->array[i] = arr->array[i - 1];
 	}
-	AppendArray(&new, n);
-	for (int i = new.realSize-1; i < arr->realSize; ++i)
-	{
-		AppendArray(&new, arr->array[i]);
-	}
-	free(arr->array);
-	return new;
+	arr->array[p] = n;
+	++arr->realSize;
 }
 
-Array RemoveArray(Array* arr, int p)
+void RemoveArray(Array* arr, int p)
 {
 
-	Array new = CreateArray(arr->realSize - 1);
-	
 	if (p < 0)
 	{
 		p = arr->size - (p * -1);
@@ -74,16 +66,17 @@ Array RemoveArray(Array* arr, int p)
 	if (p > arr->realSize)
 	{
 		printf("You cannot remove value, the array size is smaller, than place value\n");
-		return *arr;
+		return;
 	}
-	
-	for (int i = 0; i < arr->realSize; ++i)
+
+	for (int i = p; i < arr->realSize - 1; ++i)
 	{
-		if (i == p) continue;
-		AppendArray(&new, arr->array[i]);
+		arr->array[i] = arr->array[i+1];
 	}
-	free(arr->array);
-	return new;
+	--arr->realSize;
+
+	if (arr->realSize + ARRAY_SIZE_INCREMENTER == arr->size)
+		arr->array = (int*)realloc(arr->array, sizeof(int) * arr->realSize);
 }
 
 void PrintArray(Array* arr)
@@ -106,11 +99,13 @@ int main()
 	printf("Original list:\n");
 	PrintArray(&arr);
 
-	arr = InsertArray(&arr, 3, -1);
-	arr = InsertArray(&arr, 3, 22);
-	arr = RemoveArray(&arr, 4);
-	arr = RemoveArray(&arr, 22);
-
+	//InsertArray(&arr, 6, 2);
+	RemoveArray(&arr, 2);
+	RemoveArray(&arr, 2);
+	RemoveArray(&arr, 2);
+	RemoveArray(&arr, 2);
+	RemoveArray(&arr, 2);
+	
 	printf("\nNew List:\n");
 	PrintArray(&arr);
 
