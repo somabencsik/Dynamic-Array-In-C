@@ -11,12 +11,12 @@ typedef struct Array_
 	int realSize;
 } Array;
 
-Array CreateArray(int n)
+Array* CreateArray(int n)
 {
-	Array arr;
-	arr.array = (int*)malloc(sizeof(int) * n);
-	arr.size = n;
-	arr.realSize = 0;
+	Array* arr = (Array*)malloc(sizeof(Array));
+	arr->array = (int*)malloc(sizeof(int) * n);
+	arr->size = n;
+	arr->realSize = 0;
 	return arr;
 }
 
@@ -79,6 +79,12 @@ void RemoveArray(Array* arr, int p)
 		arr->array = (int*)realloc(arr->array, sizeof(int) * arr->realSize);
 }
 
+void DeleteArray(Array* arr)
+{
+	free(arr->array);
+	free(arr);
+}
+
 void PrintArray(Array* arr)
 {
 	for (int i = 0; i < arr->realSize; ++i)
@@ -89,25 +95,17 @@ void PrintArray(Array* arr)
 
 int main()
 {
-	Array arr = CreateArray(5);
+	Array* arr = CreateArray(5);
 
 	for (int i = 0; i < 10; ++i)
 	{
-		AppendArray(&arr, (10 - i));
+		AppendArray(arr, (10 - i));
 	}
 
 	printf("Original list:\n");
-	PrintArray(&arr);
+	PrintArray(arr);
 
-	//InsertArray(&arr, 6, 2);
-	RemoveArray(&arr, 2);
-	RemoveArray(&arr, 2);
-	RemoveArray(&arr, 2);
-	RemoveArray(&arr, 2);
-	RemoveArray(&arr, 2);
-	
-	printf("\nNew List:\n");
-	PrintArray(&arr);
+	DeleteArray(arr);
 
 	return 0;
 }
